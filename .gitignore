@@ -1,0 +1,33 @@
+# Dependencies
+**/[Dd]ependencies/
+**/[Pp]ackages/
+**/[Nn]ode_[Mm]odules/
+
+# Tooling
+**/[Tt]ools/
+
+# Build results
+**/[Bb]in/
+**/[Oo]bj/
+**/[Rr]elease/
+**/[Xx]86/
+**/[Xx]64/
+**/[Aa][Rr][Mm]/
+**/[Aa][Rr][Mm]64/
+
+# Visual Studio specific
+**/[Vv][Ss]/
+**/.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider specific
+**/.idea/
+
+# User-specific files
+*.DotSettings.user
+
+# Environment files
+.env
