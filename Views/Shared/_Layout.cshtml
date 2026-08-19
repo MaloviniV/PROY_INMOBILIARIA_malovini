@@ -1,50 +1,88 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PROY_INMOBILIARIA_malovini</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PROY_INMOBILIARIA_malovini.styles.css" asp-append-version="true" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewBag.title - INMOBILIARIA</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Evita que se superpongan los estilos CSS -->
+  <link rel="stylesheet" href="~/PROY_INMOBILIARIA_malovini.styles.css" asp-append-version="true" />
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+  <!-- Insercion de los Script de las secciones-->
+  @await RenderSectionAsync("Scripts", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PROY_INMOBILIARIA_malovini</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="d-flex flex-column min-vh-100">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top py-10">
+      <div class="container-fluid d-flex justify-content-between px-5">
+        <!-- Logo -->
+        <a class="navbar-brand" href="#">INMOBILIARIA</a>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PROY_INMOBILIARIA_malovini - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        @if (false) //NO ESTA AUTENTICADO
+        {
+@*           <button class='btn btn-outline-light ms-lg-3
+                        asp-controller="Home"
+                        asp-action="Privacy"'>
+            <i class="bi bi-box-arrow-in-right me-2"></i>LOGIN
+          </button> *@
+        }
+        else
+        {
+          <!-- Boton hamburgues para moviles -->
+          <button class="navbar-toggler" type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#menuNavegacion"
+                  aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Enlaces de navegacion -->
+          <div class="collapse navbar-collapse flex-grow-1 text-end" id="menuNavegacion">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item ">
+                <a class="nav-link">INICIO</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link">PROPIETARIO</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link">INQUILINO</a>
+              </li>
+            </ul>
+
+            <div class="dropdown">
+              <button class='btn btn-outline-light ms-lg-3 dropdown-toggle'
+                      type="button"
+                      id="userMenu"
+                      data-bs-toggle="dropdown">
+                <i class="bi bi-person-fill me-2"></i>USUARIO
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                <a class="dropdown-item">PERFIL</a>
+                <a class="dropdown-item">SALIR</a>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    </nav>
+  </header>
+
+  <main role="main" class="container flex-grow-1">
+    <div class="">
+			<div class="m-1 p-1">
+				@RenderBody()
+			</div>
+		</div>
+  </main>
+
+  <footer class="footer">
+    <div class="container-fluid bg-dark text-white py-3 px-5 d-flex justify-content-center align-items-center ">
+      <span class="me-5">&copy; @DateTime.Today.Year Universidad de La Punta &middot; LABORATORIO 2 &middot; TP-INMOBILIARIA</span>
+      <a href="#" class="btn btn-outline-light btn-sm">Volver arriba</a>
+    </div>
+  </footer>
 </body>
 </html>
