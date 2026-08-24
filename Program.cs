@@ -1,7 +1,19 @@
+using PROY_INMOBILIARIA_malovini.Data;
+using PROY_INMOBILIARIA_malovini.Repositories;
+using PROY_INMOBILIARIA_malovini.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
+
+
+builder.Services.AddScoped<DbConnection>();
+builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();
+builder.Services.AddScoped<IPropietarioService, PropietarioService>();
 
 var app = builder.Build();
 
