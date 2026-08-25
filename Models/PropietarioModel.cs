@@ -1,12 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PROY_INMOBILIARIA_malovini.Models;
 
 public class PropietarioModel
 {
-  public int Id {get;set;}
-  public string Apellido {get;set;}
-  public string Nombre {get;set;}
-  public string Dni {get;set;}
-  public string Telefono {get;set;}
-  public string Mail {get;set;}
-  public string Direccion {get;set;}
+  public int IdPersona { get; set; }
+
+  [Required(ErrorMessage = "Campo incompleto.")]
+  [RegularExpression(@"^\d{22}$", ErrorMessage = "El CBU debe contener exactamente 22 números.")]
+  public string Cbu { get; set; }
+
+  [Required(ErrorMessage = "Campo incompleto.")]
+  [RegularExpression(@"^\d{11}$", ErrorMessage = "El CUIT debe contener exactamente 11 números.")]
+  public string Cuit { get; set; }
+
+  public bool Estado { get; set; }
+
+  [Required]
+  public PersonaModel Persona { get; set; }
 }

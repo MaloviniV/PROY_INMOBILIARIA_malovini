@@ -1,0 +1,68 @@
+@model List<PropietarioModel>
+
+<div class="container mt-4">
+  <!--ENCABEZADO-->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h1>Propietarios</h1>
+    </div>
+    <div class="col-md-6 text-end">
+      <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Gestionar Propietario
+      </a>
+    </div>
+  </div>
+
+  <!--TABLA-->
+  @if (Model?.Count > 0)
+  {
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var propietario in Model)
+          {
+            <tr>
+              <td>@propietario.Persona.Id</td>
+              <td>@propietario.Persona.Nombre</td>
+              <td>@propietario.Persona.Apellido</td>
+              <td>@propietario.Persona.Dni</td>
+              <td>@propietario.Persona.Telefono</td>
+              <td>@propietario.Persona.Mail</td>
+              <td>@propietario.Persona.Direccion</td>
+              <td>
+                <a asp-action="Details" asp-route-id="@propietario.Persona.Id" class="btn btn-sm btn-info">
+                  <i class="bi bi-eye"></i> Ver
+                </a>
+                <a asp-action="Edit" asp-route-id="@propietario.Persona.Id" class="btn btn-sm btn-warning">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a asp-action="Delete" asp-route-id="@propietario.Persona.Id" class="btn btn-sm btn-danger"
+                  onclick="return confirm('¿Estás seguro?')">
+                  <i class="bi bi-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  else
+  {
+    <div class="alert alert-info">
+      <p>No hay propietarios registrados. <a asp-action="Create">Agregar Propietario</a></p>
+    </div>
+  }
+</div>
