@@ -63,7 +63,29 @@ public class PropietarioRepository : IPropietarioRepository
 
   public async Task<PropietarioModel?> ObtenerPorId(int id)
   {
-    throw new NotImplementedException();
+    await using var conexion = _dbConnection.CreateConnection();
+    await conexion.OpenAsync();
+
+    const string sql = @"SELECT id_persona, cbu, cuit, estado
+                        FROM propietarios
+                        WHERE id_persona=@id_persona";
+
+    await using var comandoPersona = new MySqlCommand(sql,conexion);
+    comandoPersona.Parameters.AddWithValue("@id_persona", id);
+
+    await using var reader = await comandoPersona.ExecuteReaderAsync();
+
+    if (reader.Read())
+    {
+      return new PropietarioModel
+      {
+        IdPersona = reader.GetInt32("id_persona"),
+        Cbu = reader.GetString("cbu"),
+        Cuit = reader.GetString("cuit"),
+        Estado = reader.GetBoolean("estado"),
+      };
+    }
+    return null;
   }
 
   /* public async Task Crear(PropietarioModel propietario)

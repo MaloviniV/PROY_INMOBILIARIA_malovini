@@ -1,0 +1,80 @@
+@model BusquedaDniViewModel?
+
+@{
+  ViewData[index: "Title"] = "Gestionar Propietario";
+  string? dniBuscado = ViewBag.DniBuscado as string;
+  bool seRealizoBusqueda = !string.IsNullOrWhiteSpace(dniBuscado);
+  PersonaModel? persona = ViewBag.Persona as PersonaModel;
+  PropietarioModel? propietario = ViewBag.Propietario as PropietarioModel;
+}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1>@ViewData["Title"]</h1>
+      <p class="text-muted">Busque una persona por su DNI para consultar o editar sus datos.</p>
+      <hr />
+
+      <form asp-action="Gestionar" method="get" class="mb-4">
+        <div class="input-group">
+          <input asp-for="Dni" class="form-control" placeholder="Ingrese el DNI" />
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+        </div>
+        <span asp-validation-for="Dni" class="text-danger"></span>
+      </form>
+
+      @if (propietario is not null)
+      {
+        <div class="card">
+          <div class="card-header">Propietario encontrado</div>
+          <div class="card-body">
+            <dl class="row mb-0">
+              <dt class="col-sm-3">Nombre</dt>
+              <dd class="col-sm-9">@persona?.Nombre @persona?.Apellido</dd>
+
+              <dt class="col-sm-3">DNI</dt>
+              <dd class="col-sm-9">@persona?.Dni</dd>
+
+              <dt class="col-sm-3">Email</dt>
+              <dd class="col-sm-9">@persona?.Mail</dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <a asp-action="Details" asp-route-id="@persona?.Id" class="btn btn-info">
+            <i class="bi bi-eye"></i> Ver detalles
+          </a>
+          <a asp-action="Edit" asp-route-id="@persona?.Id" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+        </div>
+      }
+      else if (seRealizoBusqueda)
+      {
+        <div class="alert alert-warning">
+          No se encontró un propietario con el DNI <strong>@dniBuscado</strong>.
+        </div>
+
+        @if (persona is not null)
+        {
+          <a asp-action="Create" asp-route-personaId="@persona.Id" class="btn btn-success">
+            <i class="bi bi-person-plus"></i> Crear propietario
+          </a>
+        }
+        else
+        {
+          <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-person-plus"></i> Crear propietario
+          </a>
+        }
+      }
+
+      <a asp-action="Index" class="btn btn-secondary mt-4">
+        <i class="bi bi-arrow-left"></i> Volver
+      </a>
+    </div>
+  </div>
+</div>

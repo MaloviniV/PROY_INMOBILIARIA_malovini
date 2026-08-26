@@ -6,6 +6,13 @@ namespace PROY_INMOBILIARIA_malovini.Repositories;
 
 public class PersonaRepository : IPersonaRepository
 {
+  private readonly DbConnection _dbConnection;
+
+  public PersonaRepository(DbConnection conn)
+  {
+    _dbConnection=conn;
+  }
+
   public Task<int> Crear(PersonaModel p)
   {
     throw new NotImplementedException();
@@ -31,9 +38,34 @@ public class PersonaRepository : IPersonaRepository
     throw new NotImplementedException();
   }
 
-  public Task<PersonaModel?> ObtenerPorDni(string dni)
+  public async Task<PersonaModel?> ObtenerPorDni(string dni)
   {
-    throw new NotImplementedException();
+    await using var conexion = _dbConnection.CreateConnection();
+    await conexion.OpenAsync();
+
+    const string sql = @"SELECT id, apellido, nombre, dni, mail, telefono, direccion 
+                        FROM personas
+                        WHERE dni=@dni";
+
+    await using var comandoPersona = new MySqlCommand(sql,conexion);
+    comandoPersona.Parameters.AddWithValue("@dni", dni);
+
+    await using var reader = await comandoPersona.ExecuteReaderAsync();
+
+    if (reader.Read())
+    {
+      return new PersonaModel
+      {
+        Id = reader.GetInt32("id"),
+        Apellido = reader.GetString("apellido"),
+        Nombre = reader.GetString("nombre"),
+        Dni = reader.GetString("dni"),
+        Mail = reader.GetString("mail"),
+        Telefono = reader.GetString("telefono"),
+        Direccion = reader.GetString("direccion"),
+      };
+    }
+    return null;
   }
 
   public Task<PersonaModel?> ObtenerPorId(int id)

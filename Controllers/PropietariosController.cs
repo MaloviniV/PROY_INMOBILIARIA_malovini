@@ -12,16 +12,42 @@ public class PropietariosController : Controller
   {
     _propietarioService = propietarioService;
   }
+
   //GET: Propietario/Index
   public IActionResult Index()
   {
     return View();
   }
-//GET: Propietario/Create
+
+  // GET: Propietarios/Gestionar
+  public async Task<IActionResult> Gestionar(BusquedaDniViewModel? busqueda)
+  {
+    //Si el input DNI tiene espacios vacios devuelvo los campos vacios
+    if (busqueda is null || string.IsNullOrWhiteSpace(busqueda.Dni))
+    {
+      return View(new BusquedaDniViewModel());
+    }
+
+    //Si el input tiene un formato valido ingreso los datos necesarios para la vista
+    if (ModelState.IsValid)
+    {
+      var (persona, propietario) = await _propietarioService.BuscarPorDni(busqueda.Dni);
+
+      ViewBag.DniBuscado = busqueda.Dni;
+      ViewBag.Persona = persona;
+      ViewBag.Propietario = propietario;
+    }
+
+    return View(busqueda);
+  }
+
+  //GET: Propietario/Create
   public IActionResult Create()
   {
     return View();
   }
+
+
 
   //POST: Propietarios/create
   [HttpPost]

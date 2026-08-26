@@ -42,4 +42,15 @@ public class PropietarioService : IPropietarioService
   {
     throw new NotImplementedException();
   }
+
+  public async Task<(PersonaModel? persona, PropietarioModel? propietario)> BuscarPorDni(string dni)
+  {
+    var persona = await _personaRepositorio.ObtenerPorDni(dni);
+
+    if(persona is null) return (null,null);
+
+    var propietario = await _propietarioRepositorio.ObtenerPorId(persona.Id);
+
+    return (persona, propietario);
+  }
 }
