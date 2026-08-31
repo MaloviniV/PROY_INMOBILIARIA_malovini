@@ -47,26 +47,64 @@ public class PropietariosController : Controller
     return View();
   }
 
-
-
   //POST: Propietarios/create
   [HttpPost]
   [ValidateAntiForgeryToken]
   public async Task<IActionResult> Create(PropietarioModel propietario)
   {
-    if (!ModelState.IsValid)
-    {
-      return View(propietario);
-    }
+    if (!ModelState.IsValid) return View(propietario);
+    
     //GUARDAR EL PROPIETARIO
-    await _propietarioService.Crear(propietario);
+    bool modificado = await _propietarioService.Crear(propietario);
+
+      if(!modificado)
+    {
+      TempData["ErrorMessage"] = "No se pudo guardar el propietario.";
+      return View(propietario);
+    } 
+
+    TempData["SuccessMessage"] = "Propietario guardado correctamente.";
 
     return RedirectToAction(nameof(Index));
   }
 
-  [ValidateAntiForgeryToken]
-  public IActionResult Edit(PropietarioModel propietario)
+
+  // GET: Propietarios/Edit
+  public async Task<IActionResult> Edit(int id)
   {
+    var propietario = await _propietarioService.BuscarPorId(id);
+
+    if (propietario is null)
+    {
+      ViewBag.ErrorMessage = "El propietario no existe o fue eliminado.";
+      return View(nameof(Edit));
+    }
+
+    return View(propietario);
+  }
+
+  // POST: Propietarios/Edit
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> Edit(PropietarioModel propietario)
+  {
+    if (!ModelState.IsValid) return View(propietario);
+
+    bool modificado = await _propietarioService.Modificar(propietario);
+
+    if(!modificado)
+    {
+      TempData["ErrorMessage"] = "No se pudo actualizar el propietario.";
+      return View(propietario);
+    } 
+
+    TempData["SuccessMessage"] = "Propietario actualizado correctamente.";
     return RedirectToAction(nameof(Index));
   }
+
+
+
+
+
+
 }

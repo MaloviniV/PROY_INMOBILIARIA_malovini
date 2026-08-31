@@ -1,3 +1,4 @@
+using PROY_INMOBILIARIA_malovini.Data;
 using PROY_INMOBILIARIA_malovini.Models;
 using PROY_INMOBILIARIA_malovini.Repositories;
 
@@ -6,16 +7,28 @@ public class PropietarioService : IPropietarioService
 {
   private readonly IPersonaRepository _personaRepositorio;
   private readonly IPropietarioRepository _propietarioRepositorio;
+  private readonly IUnitOfWork _uow;
 
-  public PropietarioService(IPersonaRepository persRep, IPropietarioRepository propRep)
+  public PropietarioService(IPersonaRepository persRep, IPropietarioRepository propRep, IUnitOfWork uow)
   {
     _personaRepositorio = persRep;
     _propietarioRepositorio = propRep;
+    _uow = uow;
   }
 
-  public Task Crear(PropietarioModel p)
+  public async Task Crear(PropietarioModel p)
   {
-    throw new NotImplementedException();
+    try
+    {
+      await _uow.TransactionAsync();
+
+      bool persCreada = await _personaRepositorio.Crear(p.Persona);
+    }
+    catch (System.Exception)
+    {
+      await _uow.RollbackAsync();
+      throw;
+    }
   }
 
   public Task Eliminar(int id)
@@ -23,9 +36,34 @@ public class PropietarioService : IPropietarioService
     throw new NotImplementedException();
   }
 
-  public Task Modificar(PropietarioModel p)
+  public async Task<bool> Modificar(PropietarioModel p)
   {
-    throw new NotImplementedException();
+    try
+    {
+    await _uow.TransactionAsync();
+
+    bool persModif = await _personaRepositorio.Modificar(p.Persona);
+    if(!persModif)
+    {
+      await _uow.RollbackAsync();
+      return persModif;
+    }
+
+    bool propModif = await _propietarioRepositorio.Modificar(p);
+    if(!propModif)
+    {
+      await _uow.RollbackAsync();
+      return persModif;
+    }
+    
+    await _uow.CommitAsync();
+    return true;
+    }
+    catch (System.Exception)
+    {
+      await _uow.RollbackAsync();
+      throw;
+    }
   }
 
   public Task<int> ObtenerCantidad()
@@ -38,9 +76,16 @@ public class PropietarioService : IPropietarioService
     throw new NotImplementedException();
   }
 
-  public Task<PropietarioModel?> ObtenerPorId(int id)
+  public async Task<PropietarioModel?> BuscarPorId(int id)
   {
-    throw new NotImplementedException();
+    var propietario = await _propietarioRepositorio.ObtenerPorId(id);
+    if(propietario is null) return null;
+
+    var persona = await _personaRepositorio.ObtenerPorId(id);
+    if(persona is null) return null;
+    propietario.Persona = persona;
+
+    return propietario;
   }
 
   public async Task<(PersonaModel? persona, PropietarioModel? propietario)> BuscarPorDni(string dni)

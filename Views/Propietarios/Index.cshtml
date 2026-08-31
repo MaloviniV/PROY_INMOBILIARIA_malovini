@@ -1,5 +1,12 @@
 @model List<PropietarioModel>
 
+@if (TempData["SuccessMessage"] != null)
+{
+  <div id="SuccessMessage" class="alert alert-success" role="alert">
+    @TempData["SuccessMessage"]
+  </div>
+}
+
 <div class="container mt-4">
   <!--ENCABEZADO-->
   <div class="row mb-4">
@@ -66,3 +73,14 @@
     </div>
   }
 </div>
+
+@section Scripts {
+  <script>
+    setTimeout(function () {
+      const SuccessMessage = document.getElementById("SuccessMessage");
+      if (SuccessMessage) {
+        SuccessMessage.remove();
+      }
+    }, 5000);
+  </script>
+}

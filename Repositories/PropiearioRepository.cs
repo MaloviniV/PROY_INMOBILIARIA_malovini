@@ -6,22 +6,22 @@ namespace PROY_INMOBILIARIA_malovini.Repositories;
 
 public class PropietarioRepository : IPropietarioRepository
 {
-  private readonly DbConnection _dbConnection;
+  private readonly IUnitOfWork _uow;
 
-  public PropietarioRepository(DbConnection conn)
+  public PropietarioRepository(IUnitOfWork uow)
   {
-    _dbConnection = conn;
+    _uow = uow;
   }
 
   public async Task<int> Crear(PropietarioModel propietario)
   {
-    await using var conexion = _dbConnection.CreateConnection();
-    await conexion.OpenAsync();
+    var conexion = await _uow.Connection();
+    var transaccion = _uow.Transaction;
 
     const string sql = @"INSERT INTO propietarios (id_persona, cbu, cuit, estado)
                           VALUES (@id_persona, @cbu, @cuit, @estado);";
 
-    await using var command = new MySqlCommand(sql, conexion);
+    await using var command = new MySqlCommand(sql, conexion, transaccion);
 
     command.Parameters.AddWithValue("@id_persona", propietario.IdPersona);
     command.Parameters.AddWithValue("@cbu", propietario.Cbu);
@@ -33,22 +33,34 @@ public class PropietarioRepository : IPropietarioRepository
 
   public async Task<int> Eliminar(int id)
   {
-    await using var conexion = _dbConnection.CreateConnection();
-    await conexion.OpenAsync();
+    var conexion = await _uow.Connection();
+    var transaccion = _uow.Transaction;
 
     const string sql = @"DELETE FROM propietarios 
                         WHERE id_persona = @id_persona;";
 
-    await using var command = new MySqlCommand(sql, conexion);
+    await using var command = new MySqlCommand(sql, conexion, transaccion);
 
     command.Parameters.AddWithValue("@id_persona", id);
 
     return await command.ExecuteNonQueryAsync();
   }
 
-  public async Task<int> Modificar(PropietarioModel p)
+  public async Task<bool> Modificar(PropietarioModel p)
   {
-    throw new NotImplementedException();
+    var conexion = await _uow.Connection();
+    var transaccion = _uow.Transaction;
+    var sql = @"UPDATE propietarios
+                SET cbu=@Cbu, cuit=@Cuit
+                WHERE id_persona = @IdPersona";
+
+    await using var command = new MySqlCommand(sql, conexion, transaccion);
+
+    command.Parameters.AddWithValue("@IdPersona", p.IdPersona);
+    command.Parameters.AddWithValue("@Cbu", p.Cbu);
+    command.Parameters.AddWithValue("@Cuit", p.Cuit);
+
+    return await command.ExecuteNonQueryAsync() >= 1;
   }
 
   public async Task<int> ObtenerCantidad()
@@ -63,14 +75,14 @@ public class PropietarioRepository : IPropietarioRepository
 
   public async Task<PropietarioModel?> ObtenerPorId(int id)
   {
-    await using var conexion = _dbConnection.CreateConnection();
-    await conexion.OpenAsync();
+    var conexion = await _uow.Connection();
+    var transaccion = _uow.Transaction;
 
     const string sql = @"SELECT id_persona, cbu, cuit, estado
                         FROM propietarios
                         WHERE id_persona=@id_persona";
 
-    await using var comandoPersona = new MySqlCommand(sql,conexion);
+    await using var comandoPersona = new MySqlCommand(sql, conexion, transaccion);
     comandoPersona.Parameters.AddWithValue("@id_persona", id);
 
     await using var reader = await comandoPersona.ExecuteReaderAsync();
@@ -87,48 +99,4 @@ public class PropietarioRepository : IPropietarioRepository
     }
     return null;
   }
-
-  /* public async Task Crear(PropietarioModel propietario)
-  {
-    await using var conexion = _dbConnection.CreateConnection();
-    await conexion.OpenAsync();
-    await using var transaccion = await conexion.BeginTransactionAsync();
-
-    try
-    {
-      const string insertarPersona = """
-        INSERT INTO personas (apellido, nombre, dni, mail, telefono, direccion)
-        VALUES (@apellido, @nombre, @dni, @mail, @telefono, @direccion);
-        SELECT LAST_INSERT_ID();
-        """;
-
-      await using var comandoPersona = new MySqlCommand(insertarPersona, conexion, transaccion);
-      comandoPersona.Parameters.AddWithValue("@apellido", propietario.Persona.Apellido);
-      comandoPersona.Parameters.AddWithValue("@nombre", propietario.Persona.Nombre);
-      comandoPersona.Parameters.AddWithValue("@dni", propietario.Persona.Dni);
-      comandoPersona.Parameters.AddWithValue("@telefono", propietario.Persona.Telefono);
-      comandoPersona.Parameters.AddWithValue("@mail", propietario.Persona.Mail);
-      comandoPersona.Parameters.AddWithValue("@direccion", propietario.Persona.Direccion);
-      propietario.PersonaId = Convert.ToInt32(await comandoPersona.ExecuteScalarAsync());
-
-      const string insertarPropietario = """
-        INSERT INTO propietarios (id_persona, cbu, cuit, estado)
-        VALUES (@id_persona, @cbu, @cuit, @estado);
-        """;
-
-      await using var comandoPropietario = new MySqlCommand(insertarPropietario, conexion, transaccion);
-      comandoPropietario.Parameters.AddWithValue("@id_persona", propietario.PersonaId);
-      comandoPropietario.Parameters.AddWithValue("@cbu", propietario.Cbu);
-      comandoPropietario.Parameters.AddWithValue("@cuit", propietario.Cuit);
-      comandoPropietario.Parameters.AddWithValue("@estado", true);
-      await comandoPropietario.ExecuteNonQueryAsync();
-
-      await transaccion.CommitAsync();
-    }
-    catch
-    {
-      await transaccion.RollbackAsync();
-      throw;
-    }
-  } */
 }
