@@ -15,7 +15,10 @@
     </div>
     <div class="col-md-6 text-end">
       <a asp-action="Gestionar" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Gestionar Propietario
+        <i class="bi bi-search"></i> Buscar
+      </a>
+      <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Crear
       </a>
     </div>
   </div>
@@ -38,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          @foreach (var propietario in Model)
+          @foreach (PropietarioModel propietario in Model)
           {
             <tr>
               <td>@propietario.Persona.Id</td>

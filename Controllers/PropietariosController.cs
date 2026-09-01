@@ -14,9 +14,10 @@ public class PropietariosController : Controller
   }
 
   //GET: Propietario/Index
-  public IActionResult Index()
+  public async Task<IActionResult> Index()
   {
-    return View();
+    IList<PropietarioModel> propietarios = await _propietarioService.ObtenerLista();
+    return View(propietarios);
   }
 
   // GET: Propietarios/Gestionar
@@ -55,16 +56,15 @@ public class PropietariosController : Controller
     if (!ModelState.IsValid) return View(propietario);
     
     //GUARDAR EL PROPIETARIO
-    bool modificado = await _propietarioService.Crear(propietario);
+    bool creado = await _propietarioService.Crear(propietario);
 
-      if(!modificado)
+      if(!creado)
     {
       TempData["ErrorMessage"] = "No se pudo guardar el propietario.";
       return View(propietario);
     } 
 
     TempData["SuccessMessage"] = "Propietario guardado correctamente.";
-
     return RedirectToAction(nameof(Index));
   }
 
@@ -76,8 +76,8 @@ public class PropietariosController : Controller
 
     if (propietario is null)
     {
-      ViewBag.ErrorMessage = "El propietario no existe o fue eliminado.";
-      return View(nameof(Edit));
+      TempData["ErrorMessage"] = "El propietario no existe o fue eliminado.";
+      return RedirectToAction(nameof(Index));
     }
 
     return View(propietario);
@@ -102,9 +102,18 @@ public class PropietariosController : Controller
     return RedirectToAction(nameof(Index));
   }
 
+  //GET: Propietarios/details/?
+  public async Task<IActionResult> Details(int id)
+  {
+    var propietario = await _propietarioService.BuscarPorId(id);
 
+    if (propietario is null)
+    {
+      TempData["ErrorMessage"] = "El propietario no existe o fue eliminado.";
+      return RedirectToAction(nameof(Index));
+    }
 
-
-
+    return View(propietario);
+  }
 
 }
