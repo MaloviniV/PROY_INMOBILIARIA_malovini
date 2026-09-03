@@ -1,0 +1,69 @@
+@model InquilinoModel
+
+@{
+  ViewData["Title"] = "Editar Inquilino";
+}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1>@ViewData["Title"]</h1>
+      <hr />
+
+      <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="IdPersona" />
+
+        <div class="mb-3">
+          <label asp-for="Persona.Nombre" class="form-label">Nombre *</label>
+          <input asp-for="Persona.Nombre" class="form-control" placeholder="Ingrese el nombre" required />
+          <span asp-validation-for="Persona.Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Persona.Apellido" class="form-label">Apellido *</label>
+          <input asp-for="Persona.Apellido" class="form-control" placeholder="Ingrese el apellido" required />
+          <span asp-validation-for="Persona.Apellido" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Persona.Dni" class="form-label">DNI *</label>
+          <input asp-for="Persona.Dni" class="form-control" placeholder="Ingrese el DNI" required />
+          <span asp-validation-for="Persona.Dni" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Persona.Telefono" class="form-label">Teléfono</label>
+          <input asp-for="Persona.Telefono" class="form-control" placeholder="Ingrese el teléfono" />
+          <span asp-validation-for="Persona.Telefono" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Persona.Mail" class="form-label">Email</label>
+          <input asp-for="Persona.Mail" type="email" class="form-control" placeholder="Ingrese el email" />
+          <span asp-validation-for="Persona.Mail" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Persona.Direccion" class="form-label">Dirección</label>
+          <input asp-for="Persona.Direccion" class="form-control" placeholder="Ingrese la dirección" />
+          <span asp-validation-for="Persona.Direccion" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Actualizar
+          </button>
+          <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}

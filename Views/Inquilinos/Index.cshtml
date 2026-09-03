@@ -1,0 +1,70 @@
+@model List<InquilinoModel>
+
+@{
+  ViewData["Title"] = "Inquilinos";
+}
+
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="col-md-6 text-end">
+      <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo Inquilino
+      </a>
+    </div>
+  </div>
+
+  @if (Model?.Count > 0)
+  {
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var inquilino in Model)
+          {
+            <tr>
+              <td>@inquilino.IdPersona</td>
+              <td>@inquilino.Persona.Nombre</td>
+              <td>@inquilino.Persona.Apellido</td>
+              <td>@inquilino.Persona.Dni</td>
+              <td>@inquilino.Persona.Telefono</td>
+              <td>@inquilino.Persona.Mail</td>
+              <td>@inquilino.Persona.Direccion</td>
+              <td>
+                <a asp-action="Details" asp-route-id="@inquilino.IdPersona" class="btn btn-sm btn-info">
+                  <i class="bi bi-eye"></i> Ver
+                </a>
+                <a asp-action="Edit" asp-route-id="@inquilino.IdPersona" class="btn btn-sm btn-warning">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a asp-action="Delete" asp-route-id="@inquilino.IdPersona" class="btn btn-sm btn-danger"
+                  onclick="return confirm('¿Estás seguro?')">
+                  <i class="bi bi-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  else
+  {
+    <div class="alert alert-info">
+      <p>No hay inquilinos registrados. <a asp-action="Create">Crear uno ahora</a></p>
+    </div>
+  }
+</div>

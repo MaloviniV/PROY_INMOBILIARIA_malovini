@@ -1,12 +1,20 @@
+using System.ComponentModel.DataAnnotations;
 namespace PROY_INMOBILIARIA_malovini.Models;
 
 public class InquilinoModel
 {
-  public int Id {get;set;}
-  public string Apellido {get;set;}
-  public string Nombre {get;set;}
-  public string Dni {get;set;}
-  public string Telefono {get;set;}
-  public string Mail {get;set;}
-  public string Direccion {get;set;}
+  public int IdPersona { get; set; }
+
+  [Required(ErrorMessage = "Campo incompleto.")]
+  public PersonaModel Persona { get; set; }
+
+  [Required(ErrorMessage = "Campo incompleto.")]
+  [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 50 letras.")]
+  public string Garante { get; set; }
+
+  [Required(ErrorMessage = "Campo incompleto.")]
+  [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 50 letras.")]
+  public string Profesion { get; set; }
+
+  public bool Estado { get; set; }
 }

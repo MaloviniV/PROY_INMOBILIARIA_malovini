@@ -1,0 +1,54 @@
+@model InquilinoModel
+
+@{
+  ViewData["Title"] = "Detalles del Inquilino";
+}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1>@ViewData["Title"]</h1>
+      <hr />
+
+      <div class="card">
+        <div class="card-body">
+          <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.IdPersona</dd>
+
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Model.Persona.Nombre</dd>
+
+            <dt class="col-sm-3">Apellido</dt>
+            <dd class="col-sm-9">@Model.Persona.Apellido</dd>
+
+            <dt class="col-sm-3">DNI</dt>
+            <dd class="col-sm-9">@Model.Persona.Dni</dd>
+
+            <dt class="col-sm-3">Teléfono</dt>
+            <dd class="col-sm-9">@Model.Persona.Telefono</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Persona.Mail</dd>
+
+            <dt class="col-sm-3">Dirección</dt>
+            <dd class="col-sm-9">@Model.Persona.Direccion</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.IdPersona" class="btn btn-warning">
+          <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.IdPersona" class="btn btn-danger"
+          onclick="return confirm('¿Estás seguro?')">
+          <i class="bi bi-trash"></i> Eliminar
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Volver
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
