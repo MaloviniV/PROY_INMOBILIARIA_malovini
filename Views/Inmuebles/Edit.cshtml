@@ -1,0 +1,18 @@
+@model InmuebleModel
+@{
+  ViewData["Title"] = "Editar inmueble";
+}
+<div class="container mt-4">
+  <div class="col-md-8 offset-md-2">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    <form asp-action="Edit" method="post"><input asp-for="Id" type="hidden" />
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+      <partial name="_Form" model="Model" /><button type="submit" class="btn btn-primary">Actualizar</button> <a
+      asp-action="Index" class="btn btn-secondary">Volver</a>
+    </form>
+  </div>
+</div>
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,20 @@
+@model ReservaModel
+@{
+  ViewData["Title"] = "Detalle de reserva";
+}
+<div class="container mt-4">
+  <h1>@ViewData["Title"]</h1>
+  <dl class="row">
+    <dt class="col-sm-3">Inquilino</dt>
+    <dd class="col-sm-9">@Model.Inquilino</dd>
+    <dt class="col-sm-3">Inmueble</dt>
+    <dd class="col-sm-9">@Model.DireccionInmueble</dd>
+    <dt class="col-sm-3">Fecha desde</dt>
+    <dd class="col-sm-9">@Model.FechaDesde.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-3">Fecha hasta</dt>
+    <dd class="col-sm-9">@Model.FechaHasta.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-3">Monto</dt>
+    <dd class="col-sm-9">@Model.Monto.ToString("C")</dd>
+  </dl><a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a> <a asp-action="Index"
+                                                                                           class="btn btn-secondary">Volver</a>
+</div>
