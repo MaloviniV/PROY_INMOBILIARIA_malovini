@@ -1,6 +1,6 @@
 # Sistema de Gestión Inmobiliaria
 
-Aplicación web desarrollada con ASP.NET Core MVC, C# y MySQL para administrar personas, propietarios e inquilinos.
+Aplicación web desarrollada con ASP.NET Core MVC, C# y MySQL para administrar personas, propietarios, inquilinos, inmuebles y reservas.
 
 ## Integrantes
 
@@ -12,8 +12,20 @@ Aplicación web desarrollada con ASP.NET Core MVC, C# y MySQL para administrar p
 
 - Propietarios: ABM completo.
 - Inquilinos: ABM completo.
-- Inmuebles: en desarrollo.
+- Tipos de inmueble: ABM completo.
+- Inmuebles: ABM completo, asociado a propietarios y tipos.
+- Reservas: ABM completo, asociado a inquilinos e inmuebles.
 - Contratos y alquileres: próximamente.
+
+## Módulos web
+
+- `/Propietarios`: gestión de propietarios.
+- `/Inquilinos`: gestión de inquilinos.
+- `/TiposInmueble`: gestión de tipos de inmueble.
+- `/Inmuebles`: gestión de inmuebles con selección de propietario y tipo.
+- `/Reservas`: gestión de reservas con selección de inquilino e inmueble.
+
+Las reservas validan que la fecha de finalización sea posterior a la fecha de inicio. Los formularios utilizan listas cargadas desde la base de datos para mantener las relaciones entre tablas.
 
 ## Requisitos
 
@@ -80,6 +92,33 @@ erDiagram
     varchar profesion
     boolean estado
   }
+    TIPOINMUEBLE {
+      int id PK
+      varchar nombre UK
+    }
+    INMUEBLES {
+      int Id PK
+      varchar imgPortada
+      int cupo
+      varchar direccion
+      decimal precio
+      boolean estado
+      int id_propietario FK
+      int id_tipo FK
+    }
+    RESERVAS {
+      int id PK
+      int id_inquilino FK
+      int id_inmueble FK
+      datetime fecha_desde
+      datetime fecha_hasta
+      decimal monto
+    }
+
+    PROPIETARIOS ||--o{ INMUEBLES : posee
+    TIPOINMUEBLE ||--o{ INMUEBLES : clasifica
+    INQUILINOS ||--o{ RESERVAS : realiza
+    INMUEBLES ||--o{ RESERVAS : recibe
 ```
 
 También se incluye el archivo editable [Diagrama/Entidad-Relacion.drawio](Diagrama/Entidad-Relacion.drawio).
