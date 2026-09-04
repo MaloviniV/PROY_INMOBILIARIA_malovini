@@ -1,33 +1,32 @@
-# Dependencies
-**/[Dd]ependencies/
-**/[Pp]ackages/
-**/[Nn]ode_[Mm]odules/
+# Compiled output and NuGet packages
+[Bb]in/
+[Oo]bj/
+*.nupkg
+*.snupkg
+packages/
 
-# Tooling
-**/[Tt]ools/
-
-# Build results
-**/[Bb]in/
-**/[Oo]bj/
-**/[Rr]elease/
-**/[Xx]86/
-**/[Xx]64/
-**/[Aa][Rr][Mm]/
-**/[Aa][Rr][Mm]64/
-
-# Visual Studio specific
-**/[Vv][Ss]/
-**/.vs/
-*.suo
+# Visual Studio, VS Code and Rider user files
+.vs/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 *.user
+*.suo
 *.userosscache
 *.sln.docstates
-
-# Rider specific
-**/.idea/
-
-# User-specific files
 *.DotSettings.user
 
-# Environment files
+# Test and coverage output
+TestResults/
+coverage/
+
+# Local secrets and environment configuration
 .env
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Frontend dependencies and generated tooling
+node_modules/
+dist/

@@ -49,6 +49,18 @@
           <span asp-validation-for="Persona.Direccion" class="text-danger"></span>
         </div>
 
+        <div class="mb-3">
+          <label asp-for="Garante" class="form-label">Garante</label>
+          <input asp-for="Garante" class="form-control" placeholder="Ingrese un garante" />
+          <span asp-validation-for="Garante" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Profesion" class="form-label">Profesión</label>
+          <input asp-for="Profesion" class="form-control" placeholder="Ingrese su profesión" />
+          <span asp-validation-for="Profesion" class="text-danger"></span>
+        </div>
+
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary">
             <i class="bi bi-check-circle"></i> Actualizar

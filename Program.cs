@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
-    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+  options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
 });
 
 
@@ -22,14 +22,23 @@ builder.Services.AddScoped<IPropietarioService, PropietarioService>();
 builder.Services.AddScoped<IInquilinoRepository, InquilinoRepository>();
 builder.Services.AddScoped<IInquilinoService, InquilinoService>();
 
+builder.Services.AddScoped<ITipoInmuebleRepository, TipoInmuebleRepository>();
+builder.Services.AddScoped<ITipoInmuebleService, TipoInmuebleService>();
+
+builder.Services.AddScoped<IInmuebleRepository, InmuebleRepository>();
+builder.Services.AddScoped<IInmuebleService, InmuebleService>();
+
+builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+builder.Services.AddScoped<IReservaService, ReservaService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+  app.UseExceptionHandler("/Home/Error");
+  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
 }
 
 app.UseHttpsRedirection();
