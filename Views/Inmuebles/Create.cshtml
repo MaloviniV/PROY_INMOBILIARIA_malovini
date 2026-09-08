@@ -2,17 +2,23 @@
 @{
   ViewData["Title"] = "Nuevo inmueble";
 }
-<div class="container mt-4">
+<div id="inmueble-form" class="container mt-4">
   <div class="col-md-8 offset-md-2">
     <h1>@ViewData["Title"]</h1>
     <hr />
-    <form asp-action="Create" method="post">
+    <form v-on:submit.prevent="enviarFormulario">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-      <partial name="_Form" model="Model" /><button type="submit" class="btn btn-primary">Guardar</button> <a
-      asp-action="Index" class="btn btn-secondary">Volver</a>
+
+      <partial name="_Form" model="Model" />
+
+      <button type="submit" class="btn btn-primary" :disabled="enviando">
+        {{ enviando ? 'Guardando...' : 'Guardar' }}
+      </button>
+      <a asp-action="Index" class="btn btn-secondary">Volver</a>
     </form>
   </div>
 </div>
 @section Scripts {
   <partial name="_ValidationScriptsPartial" />
+  <script src="~/js/inmuebles-form.js" asp-append-version="true"></script>
 }

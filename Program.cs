@@ -10,8 +10,6 @@ builder.Services.AddControllersWithViews(options =>
   options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
 });
 
-
-builder.Services.AddScoped<DbConnection>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IPersonaRepository, PersonaRepository>();

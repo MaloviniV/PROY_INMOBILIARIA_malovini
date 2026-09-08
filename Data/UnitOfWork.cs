@@ -5,13 +5,13 @@ namespace PROY_INMOBILIARIA_malovini.Data;
 
 public class UnitOfWork : IUnitOfWork
 {
-  private readonly DbConnection _dbConnection;
+  private readonly string _connectionString;
   private MySqlConnection? _connection;
   private MySqlTransaction? _transaction;
 
-  public UnitOfWork(DbConnection conn)
+  public UnitOfWork(IConfiguration configuration)
   {
-    _dbConnection = conn;
+    _connectionString = configuration.GetConnectionString("DefaultConnection")?? throw new Exception("No se encontró la cadena de conexión.");
   }
   public MySqlTransaction? Transaction
   {
@@ -24,7 +24,7 @@ public class UnitOfWork : IUnitOfWork
   {
     if (_connection is null)
     {
-      _connection = _dbConnection.CreateConnection();
+      _connection = new MySqlConnection(_connectionString);
       await _connection.OpenAsync();
     }
     return _connection;
