@@ -1,0 +1,107 @@
+@model IList<PersonaModel>
+
+@{
+  ViewData["Title"] = "Clientes";
+}
+
+<div id="app" class="container mt-4" v-cloak>
+  @*Cabecera*@
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>LISTADO DE CLIENTES</h2>
+
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalNuevoCliente">
+      <i class="bi bi-plus-circle"></i> Nuevo Cliente
+    </button>
+  </div>
+  @*Botones clientes*@
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a href="#" class="nav-link" :class="classActiveTodos" @@click.prevent="filtroActual = `TODOS`">Todos</a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link" :class="classActivePropietarios"
+      @@click.prevent="filtroActual = `PROPIETARIOS`">Propietarios</a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link" :class="classActiveInquilinos"
+      @@click.prevent="filtroActual = `INQUILINOS`">Inquilinos</a>
+    </li>
+  </ul>
+  @*tabla de cliente*@
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>DNI</th>
+        <th>Nombre y Apellido</th>
+        <th>Roles</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="cliente in clientesFiltrados" :key="cliente.dni">
+        <td>{{cliente.dni}}</td>
+        <td>{{cliente.apellido}} {{cliente.nombre}}</td>
+        <td>
+          <span v-if="cliente.esPropietario" class="badge bg-primary me-1">Propietario</span>
+          <span v-if="cliente.esInquilino" class="badge bg-success">Inquilino</span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary">Ver Perfil</button>
+        </td>
+      </tr>
+
+      <tr v-if="clientesFiltrados.length === 0">
+        <td colspan="4" class="text-center">No hay clientes para mostrar en esta vista.</td>
+      </tr>
+    </tbody>
+  </table>
+  @*Modal validacion de cliente*@
+  <div class="modal fade" id="ModalNuevoCliente" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Validar Nuevo Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <label>Ingrese el DNI:</label>
+          <div class="input-group">
+            <input type="text" v-model="dniBusqueda" @@input="normalizarDni" class="form-control"
+                   placeholder="Ej: 12345678">
+            <button type="button" class="btn btn-outline-secondary" @@click="limpiarDni">
+              <i class="bi bi-x-circle"></i> Limpiar
+            </button>
+          </div>
+
+          <!-- Mensaje de Validación en Tiempo Real desde ASP.NET -->
+          <div v-if="mensajeValidacion" class="alert mt-2" :class="claseAlerta">
+            {{ mensajeValidacion }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- Al hacer clic, llama a la API de ASP.NET -->
+          <button v-if="!dniVerificado" type="button" class="btn btn-primary" :disabled="!dniValido"
+            @@click="verificarDni">
+            Buscar / Validar
+          </button>
+          <a v-else-if="clienteEncontrado" class="btn btn-warning" :href="`/Clientes/Edit?dni=${dniBusqueda}`">
+            <i class="bi bi-pencil"></i> Editar cliente
+          </a>
+          <a v-else class="btn btn-success" :href="`/Clientes/Create?dni=${dniBusqueda}`">
+            <i class="bi bi-person-plus"></i> Crear cliente
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+@section Scripts {
+  <script src="/js/clientes.js"></script>
+}
