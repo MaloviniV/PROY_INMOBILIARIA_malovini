@@ -17,8 +17,8 @@ public class PropietarioRepository : IPropietarioRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"INSERT INTO propietarios (id_persona, cbu, cuit, estado)
-                          VALUES (@id_persona, @cbu, @cuit, @estado);
+    const string sql = @"INSERT INTO propietarios (id_persona, cbu, cuit)
+                VALUES (@id_persona, @cbu, @cuit);
                           SELECT LAST_INSERT_ID();";
 
     await using var command = new MySqlCommand(sql, conexion, transaccion);
@@ -26,7 +26,6 @@ public class PropietarioRepository : IPropietarioRepository
     command.Parameters.AddWithValue("@id_persona", propietario.IdPersona);
     command.Parameters.AddWithValue("@cbu", propietario.Cbu);
     command.Parameters.AddWithValue("@cuit", propietario.Cuit);
-    command.Parameters.AddWithValue("@estado", true);
 
     var result = await command.ExecuteScalarAsync();
     return Convert.ToInt32(result);
@@ -67,7 +66,7 @@ public class PropietarioRepository : IPropietarioRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT id_persona, cbu, cuit, estado
+    const string sql = @"SELECT id_persona, cbu, cuit
                         FROM propietarios
                         WHERE id_persona=@id_persona";
 
@@ -83,7 +82,6 @@ public class PropietarioRepository : IPropietarioRepository
         IdPersona = reader.GetInt32("id_persona"),
         Cbu = reader.GetString("cbu"),
         Cuit = reader.GetString("cuit"),
-        Estado = reader.GetBoolean("estado"),
       };
     }
     return null;
@@ -93,7 +91,7 @@ public class PropietarioRepository : IPropietarioRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT p.id_persona, p.cbu, p.cuit, p.estado,
+    const string sql = @"SELECT p.id_persona, p.cbu, p.cuit,
                               pers.id, pers.nombre, pers.apellido, pers.dni, pers.mail, pers.telefono, pers.direccion
                         FROM propietarios p
                         INNER JOIN personas pers ON p.id_persona = pers.id
@@ -117,7 +115,6 @@ public class PropietarioRepository : IPropietarioRepository
         IdPersona = reader.GetInt32("id_persona"),
         Cbu = reader.GetString("cbu"),
         Cuit = reader.GetString("cuit"),
-        Estado = reader.GetBoolean("estado"),
         Persona = new PersonaModel
         {
           Id = reader.GetInt32("id"),

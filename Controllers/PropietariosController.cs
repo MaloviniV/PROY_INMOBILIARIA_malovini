@@ -21,12 +21,12 @@ public class PropietariosController : Controller
   }
 
   // GET: Propietarios/Gestionar
-  public async Task<IActionResult> Gestionar(BusquedaDniViewModel? busqueda)
+  public async Task<IActionResult> Gestionar(DniValidatorModel? busqueda)
   {
     //Si el input DNI tiene espacios vacios devuelvo los campos vacios
     if (busqueda is null || string.IsNullOrWhiteSpace(busqueda.Dni))
     {
-      return View(new BusquedaDniViewModel());
+      return View(new DniValidatorModel());
     }
 
     //Si el input tiene un formato valido ingreso los datos necesarios para la vista
@@ -54,15 +54,15 @@ public class PropietariosController : Controller
   public async Task<IActionResult> Create(PropietarioModel propietario)
   {
     if (!ModelState.IsValid) return View(propietario);
-    
+
     //GUARDAR EL PROPIETARIO
     bool creado = await _propietarioService.Crear(propietario);
 
-      if(!creado)
+    if (!creado)
     {
       TempData["ErrorMessage"] = "No se pudo guardar el propietario.";
       return View(propietario);
-    } 
+    }
 
     TempData["SuccessMessage"] = "Propietario guardado correctamente.";
     return RedirectToAction(nameof(Index));
@@ -92,11 +92,11 @@ public class PropietariosController : Controller
 
     bool modificado = await _propietarioService.Modificar(propietario);
 
-    if(!modificado)
+    if (!modificado)
     {
       TempData["ErrorMessage"] = "No se pudo actualizar el propietario.";
       return View(propietario);
-    } 
+    }
 
     TempData["SuccessMessage"] = "Propietario actualizado correctamente.";
     return RedirectToAction(nameof(Index));

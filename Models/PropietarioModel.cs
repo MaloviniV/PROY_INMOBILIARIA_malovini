@@ -14,8 +14,6 @@ public class PropietarioModel
   [RegularExpression(@"^\d{11}$", ErrorMessage = "El CUIT debe contener exactamente 11 números.")]
   public string Cuit { get; set; }
 
-  public bool Estado { get; set; }
-
   [Required]
   public PersonaModel Persona { get; set; }
 }

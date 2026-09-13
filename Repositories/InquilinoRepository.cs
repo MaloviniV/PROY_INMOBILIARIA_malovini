@@ -17,8 +17,8 @@ public class InquilinoRepository : IInquilinoRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"INSERT INTO inquilinos (id_persona, garante, profesion, estado)
-                          VALUES (@id_persona, @garante, @profesion, @estado);
+    const string sql = @"INSERT INTO inquilinos (id_persona, garante, profesion)
+                VALUES (@id_persona, @garante, @profesion);
                           SELECT LAST_INSERT_ID();";
 
     await using var command = new MySqlCommand(sql, conexion, transaccion);
@@ -26,7 +26,6 @@ public class InquilinoRepository : IInquilinoRepository
     command.Parameters.AddWithValue("@id_persona", inquilino.IdPersona);
     command.Parameters.AddWithValue("@garante", inquilino.Garante);
     command.Parameters.AddWithValue("@profesion", inquilino.Profesion);
-    command.Parameters.AddWithValue("@estado", true);
 
     var result = await command.ExecuteScalarAsync();
     return Convert.ToInt32(result);
@@ -67,7 +66,7 @@ public class InquilinoRepository : IInquilinoRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT id_persona, garante, profesion, estado
+    const string sql = @"SELECT id_persona, garante, profesion
                         FROM inquilinos
                         WHERE id_persona=@id_persona";
 
@@ -83,7 +82,6 @@ public class InquilinoRepository : IInquilinoRepository
         IdPersona = reader.GetInt32("id_persona"),
         Garante = reader.GetString("garante"),
         Profesion = reader.GetString("profesion"),
-        Estado = reader.GetBoolean("estado"),
       };
     }
     return null;
@@ -93,7 +91,7 @@ public class InquilinoRepository : IInquilinoRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT i.id_persona, i.garante, i.profesion, i.estado,
+    const string sql = @"SELECT i.id_persona, i.garante, i.profesion,
                               pers.id, pers.nombre, pers.apellido, pers.dni, pers.mail, pers.telefono, pers.direccion
                         FROM inquilinos i
                         INNER JOIN personas pers ON i.id_persona = pers.id
@@ -117,7 +115,6 @@ public class InquilinoRepository : IInquilinoRepository
         IdPersona = reader.GetInt32("id_persona"),
         Garante = reader.GetString("garante"),
         Profesion = reader.GetString("profesion"),
-        Estado = reader.GetBoolean("estado"),
         Persona = new PersonaModel
         {
           Id = reader.GetInt32("id"),

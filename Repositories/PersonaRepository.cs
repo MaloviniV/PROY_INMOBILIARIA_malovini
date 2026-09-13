@@ -17,8 +17,8 @@ public class PersonaRepository : IPersonaRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"INSERT INTO personas (nombre, apellido, dni, telefono, mail, direccion)
-                          VALUES (@nombre, @apellido, @dni, @telefono, @mail, @direccion);
+    const string sql = @"INSERT INTO personas (nombre, apellido, dni, telefono, mail, direccion, fechaAlta, activo)
+                VALUES (@nombre, @apellido, @dni, @telefono, @mail, @direccion, @fechaAlta, @activo);
                           SELECT LAST_INSERT_ID();";
 
     await using var command = new MySqlCommand(sql, conexion, transaccion);
@@ -29,6 +29,8 @@ public class PersonaRepository : IPersonaRepository
     command.Parameters.AddWithValue("@telefono", p.Telefono);
     command.Parameters.AddWithValue("@mail", p.Mail);
     command.Parameters.AddWithValue("@direccion", p.Direccion);
+    command.Parameters.AddWithValue("@fechaAlta", p.FechaAlta);
+    command.Parameters.AddWithValue("@activo", p.Activo);
 
     var result = await command.ExecuteScalarAsync();
     return Convert.ToInt32(result);
@@ -93,6 +95,8 @@ public class PersonaRepository : IPersonaRepository
         Mail = reader.GetString("mail"),
         Telefono = reader.GetString("telefono"),
         Direccion = reader.GetString("direccion"),
+        FechaAlta = reader.GetDateTime("fechaAlta"),
+        Activo = reader.GetBoolean("activo"),
       };
     }
     ;
@@ -103,8 +107,8 @@ public class PersonaRepository : IPersonaRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT id, apellido, nombre, dni, mail, telefono, direccion 
-                        FROM personas
+    const string sql = @"SELECT id, apellido, nombre, dni, mail, telefono, direccion, fechaAlta, activo
+                        FROM personas p
                         WHERE dni=@dni";
 
     await using var comandoPersona = new MySqlCommand(sql, conexion, transaccion);
@@ -124,6 +128,8 @@ public class PersonaRepository : IPersonaRepository
         Mail = reader.GetString("mail"),
         Telefono = reader.GetString("telefono"),
         Direccion = reader.GetString("direccion"),
+        FechaAlta = reader.GetDateTime("fechaAlta"),
+        Activo = reader.GetBoolean("activo"),
       };
     }
     return null;
@@ -133,7 +139,7 @@ public class PersonaRepository : IPersonaRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT id, apellido, nombre, dni, mail, telefono, direccion 
+    const string sql = @"SELECT id, apellido, nombre, dni, mail, telefono, direccion, fechaAlta, activo
                         FROM personas
                         WHERE mail=@mail";
 
@@ -154,6 +160,8 @@ public class PersonaRepository : IPersonaRepository
         Mail = reader.GetString("mail"),
         Telefono = reader.GetString("telefono"),
         Direccion = reader.GetString("direccion"),
+        FechaAlta = reader.GetDateTime("fechaAlta"),
+        Activo = reader.GetBoolean("activo"),
       };
     }
     return null;
@@ -163,7 +171,7 @@ public class PersonaRepository : IPersonaRepository
   {
     var conexion = await _uow.Connection();
     var transaccion = _uow.Transaction;
-    const string sql = @"SELECT id, nombre, apellido, dni, mail, telefono, direccion
+    const string sql = @"SELECT id, nombre, apellido, dni, mail, telefono, direccion, fechaAlta, activo
                         FROM personas
                         ORDER BY id
                         LIMIT @limit OFFSET @offset";
@@ -189,6 +197,8 @@ public class PersonaRepository : IPersonaRepository
         Mail = reader.GetString("mail"),
         Telefono = reader.GetString("telefono"),
         Direccion = reader.GetString("direccion"),
+        FechaAlta = reader.GetDateTime("fechaAlta"),
+        Activo = reader.GetBoolean("activo"),
       });
     }
 

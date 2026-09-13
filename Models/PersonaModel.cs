@@ -29,4 +29,10 @@ public class PersonaModel
   [Required(ErrorMessage = "Campo incompleto.")]
   [StringLength(50, MinimumLength = 3, ErrorMessage = "Ingrese una direccion valida debe tener entre 3 y 50 caracteres.")]
   public string Direccion { get; set; }
+
+  public DateTime FechaAlta { get; set; } = DateTime.Now;
+  public bool Activo { get; set; } = true;
+
+  public InquilinoModel? Inquilino { get; set; }
+  public PropietarioModel? Propietario { get; set; }
 }
