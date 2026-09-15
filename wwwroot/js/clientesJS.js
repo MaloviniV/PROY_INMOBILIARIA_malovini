@@ -1,35 +1,14 @@
 Vue.createApp({
   data() {
     return {
-      filtroActual: "TODOS",
       dniBusqueda: "",
+      dniVerificado: false,
+      clienteEncontrado: false,
       mensajeValidacion: "",
       claseAlerta: "",
-      clienteEncontrado: false,
-      dniVerificado: false,
-      clientes: [
-        {
-          dni: "11111111",
-          nombre: "Juan",
-          apellido: "Pérez",
-          esPropietario: true,
-          esInquilino: false,
-        },
-        {
-          dni: "22222222",
-          nombre: "María",
-          apellido: "Gómez",
-          esPropietario: false,
-          esInquilino: true,
-        },
-        {
-          dni: "33333333",
-          nombre: "Carlos",
-          apellido: "López",
-          esPropietario: true,
-          esInquilino: true,
-        },
-      ],
+      
+      filtroActual: "TODOS",
+      clientes: [],
     };
   },
   computed: {
@@ -55,6 +34,22 @@ Vue.createApp({
       }
     },
   },
+  async mounted() {
+    try {
+      const response = await fetch("/Clientes/ListarClientes");
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "No se pudo cargar el listado de clientes.");
+      }
+
+      this.clientes = result.data;
+    } catch (error) {
+      console.error("Error al cargar clientes:", error);
+      this.mensajeValidacion = error.message;
+      this.claseAlerta = "alert-danger";
+    }
+  },
   methods: {
     normalizarDni(event) {
       this.dniBusqueda = event.target.value.replace(/\D/g, "").slice(0, 8);
@@ -71,18 +66,24 @@ Vue.createApp({
     },
     async verificarDni() {
       try {
-        //Espero la variable "exite" y "nombreCompleto"
-        const response = await fetch(
-          `/Clientes/verificarDni?dni=${this.dniBusqueda}`,
+        //Espero la variable "data", "nombre" y "apellido"
+        const response = await fetch(`/Clientes/BuscarPorDni?dni=${encodeURIComponent(this.dniBusqueda)}`
         );
         const data = await response.json();
 
-        this.clienteEncontrado = data.existe;
+        if (!response.ok) {
+          this.dniVerificado = false;
+          this.claseAlerta = "alert-danger";
+          this.mensajeValidacion = data.message || "El DNI ingresado no es válido.";
+          return;
+        }
+
+        this.clienteEncontrado = data.success;
         this.dniVerificado = true;
 
         if (this.clienteEncontrado) {
           this.claseAlerta = "alert-warning";
-          this.mensajeValidacion = `El DNI ya pertenece a ${data.nombreCompleto}. ¿Deseas agregarle un nuevo rol?`;
+          this.mensajeValidacion = `El DNI ya pertenece a ${data.data.apellido} ${data.data.nombre}. ¿Deseas agregarle un nuevo rol?`;
         } else {
           this.claseAlerta = "alert-success";
           this.mensajeValidacion =

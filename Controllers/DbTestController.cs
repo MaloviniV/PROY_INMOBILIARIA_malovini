@@ -5,19 +5,18 @@ namespace PROY_INMOBILIARIA_malovini.Controllers;
 
 public class DbTestController : Controller
 {
-  private readonly DbConnection _dbConnection;
+  private readonly IUnitOfWork _unitOfWork;
 
-  public DbTestController(DbConnection dbConnection)
+  public DbTestController(IUnitOfWork unitOfWork)
   {
-    _dbConnection = dbConnection;
+    _unitOfWork = unitOfWork;
   }
 
   public async Task<IActionResult> Index()
   {
     try
     {
-      await using var conexion = _dbConnection.CreateConnection();
-      await conexion.OpenAsync();
+      await _unitOfWork.Connection();
 
       return Content("Conexion exitosa");
     }

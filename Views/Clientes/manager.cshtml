@@ -1,0 +1,271 @@
+@model ClienteManagerViewModel
+
+@{
+  bool esCrear = Model.Modo == "crear";
+  bool esLectura = Model.Modo == "lectura";
+  ViewData["Title"] = esCrear ? "Crear Cliente" : esLectura ? "Detalle del Cliente" : "Editar Cliente";
+}
+
+<div id="app" class="container mt-4" v-cloak data-modo="@Model.Modo" data-has-propietario="true"
+     data-has-inquilino="true">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-1 text-success">GESTIONAR CLIENTE</h2>
+
+    <a asp-action="Index" class="btn btn-success">
+      <i class="bi bi-arrow-left"></i> Volver al Listado
+    </a>
+  </div>
+
+  <form id="cliente-manager-form" method="post" asp-action="Manager">
+    @Html.AntiForgeryToken()
+    <input asp-for="SeccionGuardada" type="hidden" />
+    <div class="row g-4 align-items-start">
+      @*DATOS PERSONALES*@
+      <div class="col-lg-4">
+        <partial name="_PartialFormPersonaManager" model="Model" />
+      </div>
+      @*DATOS ROLES*@
+      <div class="col-lg-8">
+        <section class="manager-role-panel border rounded p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h5 mb-0">Roles del cliente</h3>
+
+          </div>
+
+          <ul class="nav nav-tabs" role="tablist" v-if="mostrarPropietario || mostrarInquilino">
+            <li class="nav-item" role="presentation" v-if="mostrarPropietario">
+              <button type="button" class="nav-link" :class="{ active: rolActivo === 'propietario' }"
+                @@click="rolActivo = 'propietario'" role="tab">
+                Propietario
+              </button>
+            </li>
+            <li class="nav-item" role="presentation" v-if="mostrarInquilino">
+              <button type="button" class="nav-link" :class="{ active: rolActivo === 'inquilino' }"
+                @@click="rolActivo = 'inquilino'" role="tab">
+                Inquilino
+              </button>
+            </li>
+          </ul>
+
+          <div class="pt-3" v-if="mostrarPropietario || mostrarInquilino">
+            <div v-show="rolActivo === 'propietario' && mostrarPropietario" class="role-tab-content">
+              <partial name="_PartialFormPropietario" model="Model" />
+
+              <section class="related-section mt-3">
+                <div class="related-section-heading">
+                  <div class="related-section-title">
+                    <span class="section-kicker">Patrimonio</span>
+                    <h4 class="h6 mb-0">Inmuebles del propietario</h4>
+                  </div>
+                  <div class="related-section-actions">
+                    <span class="badge text-bg-light">@Model.InmueblesPropietario.Count</span>
+                    <a asp-controller="Inmuebles" asp-action="Create" asp-route-propietarioId="@Model.Persona.Id"
+                       class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-plus-lg"></i> Agregar inmueble
+                    </a>
+                  </div>
+                </div>
+
+                @if (Model.InmueblesPropietario.Count == 0)
+                {
+                  <p class="empty-related mb-0">Este propietario todavía no tiene inmuebles registrados.</p>
+                }
+                else
+                {
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                      <thead>
+                        <tr>
+                          <th>Dirección</th>
+                          <th>Tipo</th>
+                          <th>Precio</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach (var inmueble in Model.InmueblesPropietario)
+                        {
+                          <tr>
+                            <td>@inmueble.Direccion</td>
+                            <td>@(inmueble.NombreTipo ?? "Sin tipo")</td>
+                            <td>@inmueble.Precio.ToString("N2")</td>
+                            <td>
+                              <span class="status-dot @(inmueble.Estado ? "is-active" : "")"></span>
+                              @(inmueble.Estado ? "Disponible" : "No disponible")
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </section>
+            </div>
+            <div v-show="rolActivo === 'inquilino' && mostrarInquilino" class="role-tab-content">
+              <partial name="_PartialFormInquilino" model="Model" />
+
+              <section class="related-section mt-3">
+                <div class="related-section-heading">
+                  <div class="related-section-title">
+                    <span class="section-kicker">Historial</span>
+                    <h4 class="h6 mb-0">Alquileres del inquilino</h4>
+                  </div>
+                  <div class="related-section-actions">
+                    <span class="badge text-bg-light">@Model.AlquileresInquilino.Count</span>
+                    <a asp-controller="Reservas" asp-action="Create" asp-route-inquilinoId="@Model.Persona.Id"
+                       class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-plus-lg"></i> Agregar reserva/alquiler
+                    </a>
+                  </div>
+                </div>
+
+                @if (Model.AlquileresInquilino.Count == 0)
+                {
+                  <p class="empty-related mb-0">Este inquilino todavía no tiene alquileres registrados.</p>
+                }
+                else
+                {
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                      <thead>
+                        <tr>
+                          <th>Inmueble</th>
+                          <th>Desde</th>
+                          <th>Hasta</th>
+                          <th>Monto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach (var alquiler in Model.AlquileresInquilino)
+                        {
+                          <tr>
+                            <td>@(alquiler.DireccionInmueble ?? "Sin dirección")</td>
+                            <td>@alquiler.FechaDesde.ToString("dd/MM/yyyy")</td>
+                            <td>@alquiler.FechaHasta.ToString("dd/MM/yyyy")</td>
+                            <td>@alquiler.Monto.ToString("N2")</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </section>
+            </div>
+          </div>
+
+          <p class="text-muted mb-0" v-else>
+            No hay roles disponibles.
+          </p>
+        </section>
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+  [v-cloak] {
+    display: none;
+  }
+
+  .manager-section,
+  .manager-role-panel {
+    background: #fff;
+    border-color: #dce5e1 !important;
+    box-shadow: 0 8px 24px rgba(26, 59, 48, 0.06);
+  }
+
+  .manager-section-heading,
+  .related-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .manager-section-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .manager-section-divider {
+    border: 0;
+    border-top: 1px solid #dce5e1;
+    margin: 1rem 0 1.25rem;
+    opacity: 1;
+  }
+
+  .role-data-section .manager-section-heading {
+    margin-bottom: 0.5rem;
+  }
+
+  .role-data-section .manager-section-divider {
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .client-data-section .manager-section-heading {
+    margin-bottom: 0.5rem;
+  }
+
+  .client-data-section .manager-section-divider {
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .related-section {
+    border-top: 1px solid #e5ece8;
+    padding-top: 1.25rem;
+  }
+
+  .related-section-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .section-kicker {
+    display: block;
+    color: #628278;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .empty-related {
+    color: #71817b;
+    font-size: 0.9rem;
+  }
+
+  .status-dot {
+    background: #a9b8b2;
+    border-radius: 50%;
+    display: inline-block;
+    height: 0.5rem;
+    margin-right: 0.35rem;
+    width: 0.5rem;
+  }
+
+  .status-dot.is-active {
+    background: #31805e;
+  }
+
+  @@media (max-width: 575.98px) {
+    .manager-section-heading {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .manager-section-actions {
+      justify-content: flex-start;
+    }
+  }
+</style>
+
+@section Scripts {
+  <script src="/js/Manager.js"></script>
+}

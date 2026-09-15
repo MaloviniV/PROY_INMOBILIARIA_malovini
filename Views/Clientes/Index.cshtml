@@ -1,4 +1,4 @@
-@model IList<PersonaModel>
+@model IList<ClienteViewModel>
 
 @{
   ViewData["Title"] = "Clientes";
@@ -55,6 +55,7 @@
       </tr>
     </tbody>
   </table>
+
   @*Modal validacion de cliente*@
   <div class="modal fade" id="ModalNuevoCliente" tabindex="-1">
     <div class="modal-dialog">
@@ -79,15 +80,22 @@
           </div>
         </div>
         <div class="modal-footer">
-          <!-- Al hacer clic, llama a la API de ASP.NET -->
           <button v-if="!dniVerificado" type="button" class="btn btn-primary" :disabled="!dniValido"
             @@click="verificarDni">
             Buscar / Validar
           </button>
-          <a v-else-if="clienteEncontrado" class="btn btn-warning" :href="`/Clientes/Edit?dni=${dniBusqueda}`">
-            <i class="bi bi-pencil"></i> Editar cliente
-          </a>
-          <a v-else class="btn btn-success" :href="`/Clientes/Create?dni=${dniBusqueda}`">
+          <div v-else-if="clienteEncontrado" class="d-flex justify-content-end gap-2">
+            <a class="btn btn-outline-secondary"
+               :href="`/Clientes/Manager?modo=lectura&dni=${encodeURIComponent(this.dniBusqueda)}`">
+              <i class="bi bi-eye"></i> Ver detalle
+            </a>
+            <a class="btn btn-warning"
+               :href="`/Clientes/Manager?modo=edicion&dni=${encodeURIComponent(this.dniBusqueda)}`">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+          </div>
+          <a v-else class="btn btn-success"
+             :href="`/Clientes/Manager?modo=crear&dni=${encodeURIComponent(this.dniBusqueda)}`">
             <i class="bi bi-person-plus"></i> Crear cliente
           </a>
         </div>
@@ -103,5 +111,5 @@
 </style>
 
 @section Scripts {
-  <script src="/js/clientes.js"></script>
+  <script src="/js/clientesJS.js"></script>
 }

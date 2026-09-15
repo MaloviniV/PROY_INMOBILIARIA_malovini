@@ -11,10 +11,11 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 
-builder.Services.AddScoped<DbConnection>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IPersonaRepository, PersonaRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
 builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();
 builder.Services.AddScoped<IPropietarioService, PropietarioService>();

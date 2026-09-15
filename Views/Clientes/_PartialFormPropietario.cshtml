@@ -1,0 +1,44 @@
+@model ClienteManagerViewModel
+
+@{
+  bool esLectura = Model.Modo == "lectura";
+}
+
+<section class="manager-section role-data-section border rounded p-2" data-seccion="propietario">
+  <div class="manager-section-heading">
+    <h3 class="h5 mb-0">Datos del propietario</h3>
+    <div class="manager-section-actions">
+      <button v-if="modoLectura || seccionEditando !== 'propietario'" type="button"
+              class="btn btn-sm btn-outline-primary" @@click="iniciarEdicion('propietario')">
+        <i class="bi bi-pencil"></i> Editar
+      </button>
+      <template v-else>
+        <button type="button" class="btn btn-sm btn-primary" @@click="guardarSeccion('propietario')">
+          <i class="bi bi-check2"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" @@click="cancelarEdicion('propietario')">
+          Cancelar
+        </button>
+      </template>
+    </div>
+  </div>
+  <hr class="manager-section-divider" />
+
+  <input asp-for="Propietario.IdPersona" type="hidden" />
+
+  <div class="row g-2">
+    <div class="col-md-6">
+      <label asp-for="Propietario.Cbu" class="form-label">CBU</label>
+      <input asp-for="Propietario.Cbu" class="form-control"
+             :readonly="modoLectura || seccionEditando !== 'propietario'" />
+      <span asp-validation-for="Propietario.Cbu" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+      <label asp-for="Propietario.Cuit" class="form-label">CUIT</label>
+      <input asp-for="Propietario.Cuit" class="form-control"
+             :readonly="modoLectura || seccionEditando !== 'propietario'" />
+      <span asp-validation-for="Propietario.Cuit" class="text-danger"></span>
+    </div>
+  </div>
+</section>

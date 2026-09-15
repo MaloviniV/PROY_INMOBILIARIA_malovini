@@ -1,0 +1,72 @@
+@model ClienteManagerViewModel
+
+@{
+  bool esLectura = Model.Modo == "lectura";
+}
+
+<section class="manager-section client-data-section border rounded p-2" data-seccion="persona">
+  <div class="manager-section-heading">
+    <h3 class="h5 mb-0">Datos del cliente</h3>
+    <div class="manager-section-actions">
+      <button v-if="modoLectura || seccionEditando !== 'persona'" type="button" class="btn btn-sm btn-outline-primary"
+        @@click="iniciarEdicion('persona')">
+        <i class="bi bi-pencil"></i> Editar
+      </button>
+      <template v-else>
+        <button type="button" class="btn btn-sm btn-primary" @@click="guardarSeccion('persona')">
+          <i class="bi bi-check2"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" @@click="cancelarEdicion('persona')">
+          Cancelar
+        </button>
+      </template>
+    </div>
+  </div>
+  <hr class="manager-section-divider" />
+
+  <input asp-for="Persona.Id" type="hidden" />
+
+  <div class="row g-1">
+    <div class="col-12">
+      <label asp-for="Persona.Nombre" class="form-label small mb-1">Nombre</label>
+      <input asp-for="Persona.Nombre" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+      <label asp-for="Persona.Apellido" class="form-label small mb-1">Apellido</label>
+      <input asp-for="Persona.Apellido" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Apellido" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+      <label asp-for="Persona.Dni" class="form-label small mb-1">DNI</label>
+      <input asp-for="Persona.Dni" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Dni" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+      <label asp-for="Persona.Telefono" class="form-label small mb-1">Telefono</label>
+      <input asp-for="Persona.Telefono" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Telefono" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+      <label asp-for="Persona.Mail" class="form-label small mb-1">Email</label>
+      <input asp-for="Persona.Mail" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Mail" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+      <label asp-for="Persona.Direccion" class="form-label small mb-1">Direccion</label>
+      <input asp-for="Persona.Direccion" class="form-control form-control-sm"
+             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <span asp-validation-for="Persona.Direccion" class="text-danger"></span>
+    </div>
+  </div>
+</section>
