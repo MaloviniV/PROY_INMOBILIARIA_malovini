@@ -3,23 +3,20 @@ Vue.createApp({
     const app = document.getElementById("app");
 
     return {
+      modo: app?.dataset.modo || "crear",
       mensaje: "",
       claseMensaje: "",
       iconoMensaje: "",
-      modoLectura: app?.dataset.modo === "lectura",
-      mostrarPropietario: app?.dataset.hasPropietario === "true",
-      mostrarInquilino: app?.dataset.hasInquilino === "true",
+      modoLectura: this.modo === "lectura",
       seccionEditando: "",
       valoresOriginales: {},
-      rolActivo:
-        app?.dataset.hasPropietario === "true"
-          ? "propietario"
-          : app?.dataset.hasInquilino === "true"
-            ? "inquilino"
-            : "",
+      rolActivo: "propietario"
     };
   },
   methods: {
+    classActive(rol) {
+      return { active: this.rolActivo === rol };
+    },
     iniciarEdicion(seccion) {
       if (this.modoLectura) {
         const dni = document.querySelector('[name="Persona.Dni"]')?.value;
@@ -41,12 +38,10 @@ Vue.createApp({
       this.seccionEditando = seccion;
     },
     guardarSeccion(seccion) {
-      const formulario = document.getElementById("cliente-manager-form");
-      const seccionGuardada = formulario?.querySelector(
-        '[name="SeccionGuardada"]',
+      const formulario = document.querySelector(
+        `form[data-seccion="${seccion}"]`,
       );
 
-      if (seccionGuardada) seccionGuardada.value = seccion;
       if (formulario) {
         formulario.requestSubmit();
         return;
