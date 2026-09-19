@@ -33,31 +33,18 @@ public class ClientesController : Controller
 
   public async Task<IActionResult> Manager([FromQuery] string? dni, [FromQuery] string modo = "crear")
   {
-    var modelo = new ClienteManagerViewModel
-    {
-      Modo = modo
-    };
+    var modelo = new ClienteManagerViewModel { Modo = modo };
+
     //MODO CREAR CON O SIN DNI
     if (modo == "crear")
     {
       modelo.Persona.Dni = dni?.Trim() ?? "";
-      modelo.Propietario = new PropietarioModel
-      {
-        IdPersona = modelo.Persona.Id,
-        Persona = modelo.Persona,
-        Cbu = string.Empty,
-        Cuit = string.Empty
-      };
-      modelo.Inquilino = new InquilinoModel
-      {
-        IdPersona = modelo.Persona.Id,
-        Persona = modelo.Persona,
-        Profesion = string.Empty
-      };
+      modelo.Propietario = null;
+      modelo.Inquilino = null;
       return View(modelo);
     }
 
-    //MODO LECTURA/EDICION SIN DNI (ERROR) ENVIA A LISTADO DE CLIENTES
+    //MODO LECTURA SIN DNI (ERROR) ENVIA A LISTADO DE CLIENTES
     if (string.IsNullOrWhiteSpace(dni))
       return RedirectToAction(nameof(Index));
 
@@ -71,73 +58,124 @@ public class ClientesController : Controller
     modelo.Propietario = await _propietarioService.BuscarPorId(persona.Id);
     modelo.Inquilino = await _inquilinoService.BuscarPorId(persona.Id);
 
-    modelo.Propietario ??= new PropietarioModel
+    if (modelo.Propietario is not null)
     {
-      IdPersona = persona.Id,
-      Persona = persona,
-      Cbu = string.Empty,
-      Cuit = string.Empty
-    };
-    modelo.Inquilino ??= new InquilinoModel
+      modelo.InmueblesPropietario = (await _inmuebleService.ObtenerPorPropietario(persona.Id))
+                                    ?? new List<InmuebleModel>();
+    }
+
+    if (modelo.Inquilino is not null)
     {
-      IdPersona = persona.Id,
-      Persona = persona,
-      Profesion = string.Empty
-    };
-
-    var inmuebles = await _inmuebleService.ObtenerLista(1, 1000);
-    modelo.InmueblesPropietario = inmuebles
-      .Where(inmueble => inmueble.IdPropietario == persona.Id)
-      .ToList();
-
-    var reservas = await _reservaService.ObtenerLista(1, 1000);
-    modelo.AlquileresInquilino = reservas
-      .Where(reserva => reserva.IdInquilino == persona.Id)
-      .ToList();
+      modelo.AlquileresInquilino = (await _reservaService.ObtenerPorInquilino(persona.Id))
+                                    ?? new List<ReservaModel>();      
+    }
 
     return View(modelo);
   }
 
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> Manager(ClienteManagerViewModel modelo)
+  public async Task<IActionResult> GuardarPersona(ClienteManagerViewModel modelo)
   {
     if (!ModelState.IsValid)
     {
-      return View(modelo);
+      return View("Manager", modelo);
     }
 
-    bool modificado;
-
-    switch (modelo.SeccionGuardada)
+    if (modelo.Persona is null)
     {
-      case "persona":
-        modificado = await _clienteService.Modificar(modelo.Persona);
-        break;
-      case "propietario" when modelo.Propietario is not null:
-        modelo.Propietario.Persona = modelo.Persona;
-        modelo.Propietario.IdPersona = modelo.Persona.Id;
-        modificado = await _propietarioService.Modificar(modelo.Propietario);
-        break;
-      case "inquilino" when modelo.Inquilino is not null:
-        modelo.Inquilino.Persona = modelo.Persona;
-        modelo.Inquilino.IdPersona = modelo.Persona.Id;
-        modificado = await _inquilinoService.Modificar(modelo.Inquilino);
-        break;
-      default:
-        ModelState.AddModelError(string.Empty, "No se indicó una sección válida para guardar.");
-        return View(modelo);
+      return ErrorDeGuardado(modelo, "No se recibieron los datos del cliente.");
     }
+
+    bool modificado = await _clienteService.Modificar(modelo.Persona);
 
     if (!modificado)
     {
-      ModelState.AddModelError(string.Empty, "No se pudieron guardar los cambios.");
-      return View(modelo);
+      return ErrorDeGuardado(modelo, "No se pudieron guardar los cambios del cliente.");
     }
 
-    TempData["SuccessMessage"] = "Cambios guardados correctamente.";
-    return RedirectToAction(nameof(Manager), new { modo = "edicion", dni = modelo.Persona.Dni });
+    return RedirectAfterSave(modelo.Persona.Dni, "Datos del cliente guardados correctamente.");
   }
+
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> GuardarPropietario(ClienteManagerViewModel modelo)
+  {
+    if (!ModelState.IsValid)
+    {
+      return View("Manager", modelo);
+    }
+
+    if (modelo.Propietario is null)
+    {
+      return ErrorDeGuardado(modelo, "No se recibieron los datos del propietario.");
+    }
+
+    var persona = ObtenerPersonaRelacionada(modelo, modelo.Propietario.IdPersona);
+    modelo.Propietario.Persona = persona;
+    modelo.Propietario.IdPersona = persona.Id;
+
+    bool modificado = await _propietarioService.Modificar(modelo.Propietario);
+
+    if (!modificado)
+    {
+      return ErrorDeGuardado(modelo, "No se pudieron guardar los cambios del propietario.");
+    }
+
+    return RedirectAfterSave(persona.Dni, "Datos del propietario guardados correctamente.");
+  }
+
+  [HttpPost]
+  [ValidateAntiForgeryToken]
+  public async Task<IActionResult> GuardarInquilino(ClienteManagerViewModel modelo)
+  {
+    if (!ModelState.IsValid)
+    {
+      return View("Manager", modelo);
+    }
+
+    if (modelo.Inquilino is null)
+    {
+      return ErrorDeGuardado(modelo, "No se recibieron los datos del inquilino.");
+    }
+
+    var persona = ObtenerPersonaRelacionada(modelo, modelo.Inquilino.IdPersona);
+    modelo.Inquilino.Persona = persona;
+    modelo.Inquilino.IdPersona = persona.Id;
+
+    bool modificado = await _inquilinoService.Modificar(modelo.Inquilino);
+
+    if (!modificado)
+    {
+      return ErrorDeGuardado(modelo, "No se pudieron guardar los cambios del inquilino.");
+    }
+
+    return RedirectAfterSave(persona.Dni, "Datos del inquilino guardados correctamente.");
+  }
+
+  private IActionResult ErrorDeGuardado(ClienteManagerViewModel modelo, string mensaje)
+  {
+    ModelState.AddModelError(string.Empty, mensaje);
+    return View("Manager", modelo);
+  }
+
+  private IActionResult RedirectAfterSave(string dni, string mensaje)
+  {
+    TempData["SuccessMessage"] = mensaje;
+    return RedirectToAction(nameof(Manager), new { modo = "edicion", dni });
+  }
+
+  private static PersonaModel ObtenerPersonaRelacionada(ClienteManagerViewModel modelo, int fallbackId)
+  {
+    var persona = modelo.Persona ?? new PersonaModel();
+    var personaId = modelo.Persona?.Id > 0 ? modelo.Persona.Id : fallbackId;
+
+    persona.Id = personaId;
+    persona.Dni = modelo.Persona?.Dni ?? string.Empty;
+
+    return persona;
+  }
+
   public IActionResult Create([FromQuery] DniValidatorModel query)
   {
     if (!ModelState.IsValid)

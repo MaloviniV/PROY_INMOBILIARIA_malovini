@@ -23,4 +23,5 @@ public class ReservaModel
 
   public string? Inquilino { get; set; }
   public string? DireccionInmueble { get; set; }
+
 }

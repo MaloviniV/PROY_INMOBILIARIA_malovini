@@ -1,5 +1,3 @@
-@model IList<ClienteViewModel>
-
 @{
   ViewData["Title"] = "Clientes";
 }
@@ -16,14 +14,14 @@
   @*Botones clientes*@
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a href="#" class="nav-link" :class="classActiveTodos" @@click.prevent="filtroActual = `TODOS`">Todos</a>
+      <a href="#" class="nav-link" :class="classActive(`TODOS`)" @@click.prevent="filtroActual = `TODOS`">Todos</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link" :class="classActivePropietarios"
+      <a href="#" class="nav-link" :class="classActive(`PROPIETARIOS`)"
       @@click.prevent="filtroActual = `PROPIETARIOS`">Propietarios</a>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link" :class="classActiveInquilinos"
+      <a href="#" class="nav-link" :class="classActive(`INQUILINOS`)"
       @@click.prevent="filtroActual = `INQUILINOS`">Inquilinos</a>
     </li>
   </ul>
@@ -67,33 +65,29 @@
         <div class="modal-body">
           <label>Ingrese el DNI:</label>
           <div class="input-group">
-            <input type="text" v-model="dniBusqueda" @@input="normalizarDni" class="form-control"
+            <input type="text" v-model="dniBusqueda" @@input="filtrarInputDni" class="form-control"
                    placeholder="Ej: 12345678">
             <button type="button" class="btn btn-outline-secondary" @@click="limpiarDni">
               <i class="bi bi-x-circle"></i> Limpiar
             </button>
           </div>
 
-          <!-- Mensaje de Validación en Tiempo Real desde ASP.NET -->
+          <!-- Mensaje de Validación -->
           <div v-if="mensajeValidacion" class="alert mt-2" :class="claseAlerta">
             {{ mensajeValidacion }}
           </div>
         </div>
         <div class="modal-footer">
           <button v-if="!dniVerificado" type="button" class="btn btn-primary" :disabled="!dniValido"
-            @@click="verificarDni">
+            @@click="buscarDni">
             Buscar / Validar
           </button>
-          <div v-else-if="clienteEncontrado" class="d-flex justify-content-end gap-2">
+          <template v-else-if="clienteEncontrado">
             <a class="btn btn-outline-secondary"
-               :href="`/Clientes/Manager?modo=lectura&dni=${encodeURIComponent(this.dniBusqueda)}`">
-              <i class="bi bi-eye"></i> Ver detalle
-            </a>
-            <a class="btn btn-warning"
                :href="`/Clientes/Manager?modo=edicion&dni=${encodeURIComponent(this.dniBusqueda)}`">
-              <i class="bi bi-pencil"></i> Editar
+              <i class="bi bi-eye"></i> Ver detalle/editar
             </a>
-          </div>
+          </template>
           <a v-else class="btn btn-success"
              :href="`/Clientes/Manager?modo=crear&dni=${encodeURIComponent(this.dniBusqueda)}`">
             <i class="bi bi-person-plus"></i> Crear cliente

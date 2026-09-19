@@ -1,14 +1,10 @@
-@model ClienteManagerViewModel
+@model InquilinoModel
 
-@{
-  bool esLectura = Model.Modo == "lectura";
-}
-
-<section class="manager-section role-data-section border rounded p-2" data-seccion="inquilino">
-  <div class="manager-section-heading">
+<section class="border rounded p-2 shadow-sm bg-body">
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
     <h3 class="h5 mb-0">Datos del inquilino</h3>
-    <div class="manager-section-actions">
-      <button v-if="modoLectura || seccionEditando !== 'inquilino'" type="button" class="btn btn-sm btn-outline-primary"
+    <div class="d-flex flex-wrap justify-content-start justify-content-sm-end gap-2">
+      <button v-if="!editando('inquilino')" type="button" class="btn btn-sm btn-outline-primary"
         @@click="iniciarEdicion('inquilino')">
         <i class="bi bi-pencil"></i> Editar
       </button>
@@ -22,23 +18,22 @@
       </template>
     </div>
   </div>
-  <hr class="manager-section-divider" />
+  <hr class="my-2" />
 
-  <input asp-for="Inquilino.IdPersona" type="hidden" />
+  <input asp-for="IdPersona" type="hidden" />
 
   <div class="row g-2">
     <div class="col-md-6">
-      <label asp-for="Inquilino.IngresosAproximados" class="form-label">Ingresos aproximados</label>
-      <input asp-for="Inquilino.IngresosAproximados" type="number" min="0" step="0.01" class="form-control"
-             :readonly="modoLectura || seccionEditando !== 'inquilino'" />
-      <span asp-validation-for="Inquilino.IngresosAproximados" class="text-danger"></span>
+      <label asp-for="IngresosAproximados" class="form-label">Ingresos aproximados</label>
+      <input asp-for="IngresosAproximados" type="number" min="0" step="0.01" class="form-control"
+             :readonly="!editando('inquilino')" />
+      <span asp-validation-for="IngresosAproximados" class="text-danger"></span>
     </div>
 
     <div class="col-md-6">
-      <label asp-for="Inquilino.Profesion" class="form-label">Profesion</label>
-      <input asp-for="Inquilino.Profesion" class="form-control"
-             :readonly="modoLectura || seccionEditando !== 'inquilino'" />
-      <span asp-validation-for="Inquilino.Profesion" class="text-danger"></span>
+      <label asp-for="Profesion" class="form-label">Profesion</label>
+      <input asp-for="Profesion" class="form-control" :readonly="!editando('inquilino')" />
+      <span asp-validation-for="Profesion" class="text-danger"></span>
     </div>
   </div>
 </section>

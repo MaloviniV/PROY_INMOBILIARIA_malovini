@@ -1,7 +1,25 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
-  "configurations": []
+  "configurations": [
+    
+    {
+      "name": "C#: Launch Startup Project",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/PROY_INMOBILIARIA_malovini.csproj"
+    },
+    {
+      "name": "Frontend: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5057", // Reemplaza por la URL/puerto local de tu app
+      "webRoot": "${workspaceFolder}/wwwroot"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (Back + Front)",
+      "configurations": ["C#: Launch Startup Project", "Frontend: Chrome"]
+    }
+  ]
 }

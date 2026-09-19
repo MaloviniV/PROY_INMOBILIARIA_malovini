@@ -3,44 +3,30 @@ Vue.createApp({
     const app = document.getElementById("app");
 
     return {
-      modo: app?.dataset.modo || "crear",
-      mensaje: "",
-      claseMensaje: "",
-      iconoMensaje: "",
-      modoLectura: this.modo === "lectura",
+      modoLectura: app?.dataset.modo === "lectura",
       seccionEditando: "",
-      valoresOriginales: {},
-      rolActivo: "propietario"
+      rolActivo: "propietario",
+
+      tienePropietario: app?.dataset.tienePropietario === "True",
+      tieneInquilino: app?.dataset.tieneInquilino === "True"
     };
   },
   methods: {
+    editando(seccion) {
+      return !(this.modoLectura || this.seccionEditando !== seccion);
+    },
     classActive(rol) {
       return { active: this.rolActivo === rol };
     },
     iniciarEdicion(seccion) {
-      if (this.modoLectura) {
-        const dni = document.querySelector('[name="Persona.Dni"]')?.value;
-        if (dni) {
-          window.location.href = `/Clientes/Manager?modo=edicion&dni=${encodeURIComponent(dni)}`;
-        }
-        return;
+      if (this.seccionEditando && this.seccionEditando !== seccion) {
+        this.cancelarEdicion(this.seccionEditando);
       }
 
-      const elemento = document.querySelector(`[data-seccion="${seccion}"]`);
-
-      if (!elemento) return;
-
-      this.valoresOriginales[seccion] = Array.from(
-        elemento.querySelectorAll("input, textarea, select"),
-      )
-        .filter((campo) => campo.name)
-        .map((campo) => ({ name: campo.name, value: campo.value }));
       this.seccionEditando = seccion;
     },
     guardarSeccion(seccion) {
-      const formulario = document.querySelector(
-        `form[data-seccion="${seccion}"]`,
-      );
+      const formulario = this.$refs[`form-${seccion}`];
 
       if (formulario) {
         formulario.requestSubmit();
@@ -48,19 +34,13 @@ Vue.createApp({
       }
 
       this.seccionEditando = "";
-      delete this.valoresOriginales[seccion];
     },
     cancelarEdicion(seccion) {
-      const elemento = document.querySelector(`[data-seccion="${seccion}"]`);
-      const valores = this.valoresOriginales[seccion] || [];
+      const formulario = this.$refs[`form-${seccion}`];
 
-      valores.forEach(({ name, value }) => {
-        const campo = elemento?.querySelector(`[name="${name}"]`);
-        if (campo) campo.value = value;
-      });
+      formulario?.reset();
 
       this.seccionEditando = "";
-      delete this.valoresOriginales[seccion];
     },
   },
 }).mount("#app");

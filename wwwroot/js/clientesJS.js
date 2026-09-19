@@ -6,7 +6,7 @@ Vue.createApp({
       clienteEncontrado: false,
       mensajeValidacion: "",
       claseAlerta: "",
-      
+
       filtroActual: "TODOS",
       clientes: [],
     };
@@ -14,15 +14,6 @@ Vue.createApp({
   computed: {
     dniValido() {
       return this.dniBusqueda.length >= 7;
-    },
-    classActiveTodos() {
-      return { active: this.filtroActual === "TODOS" };
-    },
-    classActivePropietarios() {
-      return { active: this.filtroActual === "PROPIETARIOS" };
-    },
-    classActiveInquilinos() {
-      return { active: this.filtroActual === "INQUILINOS" };
     },
     clientesFiltrados() {
       if (this.filtroActual === "TODOS") {
@@ -40,7 +31,9 @@ Vue.createApp({
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.message || "No se pudo cargar el listado de clientes.");
+        throw new Error(
+          result.message || "No se pudo cargar el listado de clientes.",
+        );
       }
 
       this.clientes = result.data;
@@ -51,7 +44,10 @@ Vue.createApp({
     }
   },
   methods: {
-    normalizarDni(event) {
+    classActive(filtro) {
+      return { active: this.filtroActual === filtro };
+    },
+    filtrarInputDni(event) {
       this.dniBusqueda = event.target.value.replace(/\D/g, "").slice(0, 8);
       this.clienteEncontrado = false;
       this.dniVerificado = false;
@@ -64,17 +60,19 @@ Vue.createApp({
       this.mensajeValidacion = "";
       this.claseAlerta = "";
     },
-    async verificarDni() {
+    async buscarDni() {
       try {
         //Espero la variable "data", "nombre" y "apellido"
-        const response = await fetch(`/Clientes/BuscarPorDni?dni=${encodeURIComponent(this.dniBusqueda)}`
+        const response = await fetch(
+          `/Clientes/BuscarPorDni?dni=${encodeURIComponent(this.dniBusqueda)}`,
         );
         const data = await response.json();
 
         if (!response.ok) {
           this.dniVerificado = false;
           this.claseAlerta = "alert-danger";
-          this.mensajeValidacion = data.message || "El DNI ingresado no es válido.";
+          this.mensajeValidacion =
+            data.message || "El DNI ingresado no es válido.";
           return;
         }
 

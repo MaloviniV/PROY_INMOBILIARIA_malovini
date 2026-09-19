@@ -1,10 +1,10 @@
 @model PersonaModel
 
-<section class="manager-section client-data-section border rounded p-2" data-seccion="persona">
-  <div class="manager-section-heading">
+<section class="border rounded p-2 shadow-sm bg-body">
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
     <h3 class="h5 mb-0">Datos del cliente</h3>
-    <div class="manager-section-actions">
-      <button v-if="modoLectura || seccionEditando !== 'persona'" type="button" class="btn btn-sm btn-outline-primary"
+    <div class="d-flex flex-wrap justify-content-start justify-content-sm-end gap-2">
+      <button v-if="!editando('persona')" type="button" class="btn btn-sm btn-outline-primary"
         @@click="iniciarEdicion('persona')">
         <i class="bi bi-pencil"></i> Editar
       </button>
@@ -18,50 +18,44 @@
       </template>
     </div>
   </div>
-  <hr class="manager-section-divider" />
+  <hr class="my-2" />
 
   <input asp-for="Id" type="hidden" />
 
   <div class="row g-1">
     <div class="col-12">
       <label asp-for="Nombre" class="form-label small mb-1">Nombre</label>
-      <input asp-for="Nombre" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Nombre" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Nombre" class="text-danger"></span>
     </div>
 
     <div class="col-12">
       <label asp-for="Apellido" class="form-label small mb-1">Apellido</label>
-      <input asp-for="Apellido" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Apellido" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Apellido" class="text-danger"></span>
     </div>
 
     <div class="col-12">
       <label asp-for="Dni" class="form-label small mb-1">DNI</label>
-      <input asp-for="Dni" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Dni" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Dni" class="text-danger"></span>
     </div>
 
     <div class="col-12">
       <label asp-for="Telefono" class="form-label small mb-1">Telefono</label>
-      <input asp-for="Telefono" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Telefono" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Telefono" class="text-danger"></span>
     </div>
 
     <div class="col-12">
       <label asp-for="Mail" class="form-label small mb-1">Email</label>
-      <input asp-for="Mail" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Mail" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Mail" class="text-danger"></span>
     </div>
 
     <div class="col-12">
       <label asp-for="Direccion" class="form-label small mb-1">Direccion</label>
-      <input asp-for="Direccion" class="form-control form-control-sm"
-             :readonly="modoLectura || seccionEditando !== 'persona'" />
+      <input asp-for="Direccion" class="form-control form-control-sm" :readonly="!editando('persona')" />
       <span asp-validation-for="Direccion" class="text-danger"></span>
     </div>
   </div>

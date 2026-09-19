@@ -16,4 +16,6 @@ public class PropietarioModel
 
   [Required]
   public PersonaModel Persona { get; set; }
+
+  public List<InmuebleModel> Inmuebles {get; set;}
 }
